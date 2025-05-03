@@ -3,6 +3,7 @@ services:
     image: postgres:15
     environment:
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=datafisher_db
     ports:
       - "5432:5432"
     volumes:
@@ -18,6 +19,14 @@ services:
     ports:
       - "5672:5672"   # Porta para conectar sua aplicação
       - "15672:15672" # Interface web (acesse http://localhost:15672)
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - DB_URL=postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable
 
 volumes:
   postgres_data:
