@@ -8,6 +8,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:  # Novo healthcheck para verificar se o Postgres está pronto
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:7
@@ -24,7 +29,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - DB_URL=postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable
 
