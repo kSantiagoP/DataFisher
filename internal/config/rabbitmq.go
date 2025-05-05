@@ -29,8 +29,8 @@ func exponentialBackoff(attempt int) time.Duration {
 }
 
 type Queue struct {
-	connec  *amqp.Connection
-	channel *amqp.Channel
+	Connec  *amqp.Connection
+	Channel *amqp.Channel
 }
 
 // Cria nova fila de jobs.
@@ -70,12 +70,12 @@ func newQueue(rabbitmqURL string) (*Queue, error) {
 		return nil, err
 	}
 
-	return &Queue{connec: connec, channel: ch}, nil
+	return &Queue{Connec: connec, Channel: ch}, nil
 }
 
 // Publica um job na fila
 func (q *Queue) Publish(jobID string) error {
-	return q.channel.Publish(
+	return q.Channel.Publish(
 		"jobs",       // exchange
 		"enrichment", // routing key
 		false,        // mandatory

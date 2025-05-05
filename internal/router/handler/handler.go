@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"github.com/kSantiagoP/DataFisher/internal/config"
-	"gorm.io/gorm"
+	"github.com/kSantiagoP/DataFisher/internal/logger"
 )
 
-var db *gorm.DB
+var (
+	logg *logger.Logger
+)
 
 func InitializeHandler() {
-	db = config.GetPostgresDB()
+	logg = logger.NewLogger("handler")
 }
