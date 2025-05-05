@@ -18,20 +18,48 @@ services:
     image: redis:7
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"   # Porta para conectar sua aplicação
       - "15672:15672" # Interface web (acesse http://localhost:15672)
-  app:
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  api:
     build: .
     ports:
       - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
+      - DB_URL=postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable
+  worker:
+    build: .
+    command: ./dataFisher-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
       - DB_URL=postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable
 
 volumes:
