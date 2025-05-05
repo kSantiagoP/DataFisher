@@ -18,7 +18,12 @@ func InitializePostgres() (*gorm.DB, error) {
 	}
 
 	//migrate schema
-	err = db.AutoMigrate(&company.Company{})
+	if !db.Migrator().HasTable(&company.Company{}) {
+		err = db.AutoMigrate(&company.Company{})
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	if err != nil {
 		logger.Errorf("postgres automigration error: %v", err)
