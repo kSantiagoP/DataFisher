@@ -1,7 +1,7 @@
 package data_api
 
 import (
-	"math/rand"
+	"time"
 )
 
 type EmailValid struct {
@@ -10,11 +10,11 @@ type EmailValid struct {
 }
 
 func ValidateEmail(emails []string) []EmailValid {
-	//latency
+	time.Sleep(100 * time.Millisecond)
 
 	var results []EmailValid
 	for _, email := range emails {
-		isValid := rand.Intn(2) == 1
+		isValid := len(email)%2 == 0
 
 		results = append(results, EmailValid{
 			Valid: isValid,
