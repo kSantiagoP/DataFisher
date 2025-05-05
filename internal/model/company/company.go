@@ -10,11 +10,11 @@ import (
 
 type Company struct {
 	gorm.Model
-	cnpj               string
-	razao_social       string
-	municipio          string //normalizado IBGE
-	segmento           int16  //código
-	situacao_cadastral string //enum (IMPLEMENTAR)
+	Cnpj               string
+	Razao_social       string
+	Municipio          string //normalizado IBGE
+	Segmento           int16  //código
+	Situacao_cadastral string //enum (IMPLEMENTAR)
 }
 
 /*
