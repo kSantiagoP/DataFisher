@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitializePostgres() (*gorm.DB, error) {
+func initializePostgres() (*gorm.DB, error) {
 	logger := logger.NewLogger("postgres")
 	dbUrl := "postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable"
 

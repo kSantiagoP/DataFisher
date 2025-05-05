@@ -3,27 +3,31 @@ package config
 import (
 	"fmt"
 
-	"github.com/kSantiagoP/DataFisher/internal/job"
 	"gorm.io/gorm"
 )
 
 var (
 	db      *gorm.DB
-	tracker *job.JobTracker
+	tracker *JobTracker
+	queue   *Queue
 )
 
 func Init() error {
 	var err error
-	db, err = InitializePostgres()
 
+	db, err = initializePostgres()
 	if err != nil {
 		return fmt.Errorf("error initializing database: %v", err)
 	}
 
-	redisURL := "redis://redis:6379"
-	tracker, err = job.NewTracker(redisURL)
+	tracker, err = initializeRedis()
 	if err != nil {
 		return fmt.Errorf("error initializing tracker: %v", err)
+	}
+
+	queue, err = initializeRabbitMQ(6)
+	if err != nil {
+		return fmt.Errorf("error initializing queue: %v", err)
 	}
 
 	return nil
@@ -33,6 +37,10 @@ func GetPostgresDB() *gorm.DB {
 	return db
 }
 
-func GetRedisTracker() *job.JobTracker {
+func GetRedisTracker() *JobTracker {
 	return tracker
+}
+
+func GetRabbitQueue() *Queue {
+	return queue
 }
