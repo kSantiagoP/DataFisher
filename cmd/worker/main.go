@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/kSantiagoP/DataFisher/internal/config"
+	"github.com/kSantiagoP/DataFisher/internal/data_api"
+	jobProcessing "github.com/kSantiagoP/DataFisher/internal/job_processing"
 	"github.com/kSantiagoP/DataFisher/internal/logger"
 )
 
@@ -12,6 +14,12 @@ func main() {
 	err := config.Init()
 	if err != nil {
 		logger.Errorf("Error initializing configs: %v", err)
+		return
+	}
+
+	err = data_api.Init()
+	if err != nil {
+		logger.Errorf("Error connecting with dataApi: %v", err)
 		return
 	}
 
@@ -42,11 +50,15 @@ func waitForJobs() error {
 	logger.Info("Worker started. Waiting for jobs...")
 
 	for msg := range msgs {
-		jobId := string(msg.Body)
+		job := msg.Body
 
-		logger.Infof("Processing job: %s\n", jobId)
+		logger.Infof("Processing job: %v\n", string(job))
 
-		//processa
+		//process
+		err := jobProcessing.ProcessMessage(job)
+		if err != nil {
+			return err
+		}
 
 		msg.Ack(false)
 	}
