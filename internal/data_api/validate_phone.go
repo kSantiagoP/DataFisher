@@ -1,6 +1,8 @@
 package data_api
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -13,7 +15,7 @@ func ValidatePhone(phones []string) []PhoneValid {
 	time.Sleep(100 * time.Millisecond)
 	var results []PhoneValid
 	for _, phone := range phones {
-		isValid := len(phone)%2 == 0
+		_, isValid, _ := GetLastCharAndCheckEven(phone)
 
 		results = append(results, PhoneValid{
 			Valid: isValid,
@@ -21,4 +23,18 @@ func ValidatePhone(phones []string) []PhoneValid {
 		})
 	}
 	return results
+}
+
+func GetLastCharAndCheckEven(s string) (int, bool, error) {
+	if len(s) == 0 {
+		return 0, false, fmt.Errorf("string vazia")
+	}
+
+	lastChar := s[len(s)-1:]
+	num, err := strconv.Atoi(lastChar)
+	if err != nil {
+		return 0, false, fmt.Errorf("último caractere não é número")
+	}
+
+	return num, num%2 == 0, nil
 }

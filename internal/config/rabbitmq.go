@@ -91,6 +91,30 @@ func (q *Queue) Publish(jobID string, cnpjs []string) error {
 		return fmt.Errorf("failed to marshal message: %v", err)
 	}
 
+	err = q.Channel.ExchangeDeclare(
+		"jobs",   // name
+		"direct", // type
+		true,     // durable
+		false,    // auto-delete
+		false,    // internal
+		false,    // no-wait
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to exchange: %v", err)
+	}
+	// vinculate queue to exchange
+	err = q.Channel.QueueBind(
+		"enrichment_jobs", // queue name
+		"enrichment",      // routing key
+		"jobs",            // exchange name
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to bind: %v", err)
+	}
+
 	err = q.Channel.Publish(
 		"jobs",       // exchange
 		"enrichment", // routing key

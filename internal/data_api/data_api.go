@@ -20,3 +20,7 @@ func Init() error {
 	}
 	return nil
 }
+
+func GetProvider() *mock.MockProvider {
+	return provider
+}
