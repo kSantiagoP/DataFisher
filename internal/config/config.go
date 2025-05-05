@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	"github.com/kSantiagoP/DataFisher/internal/logger"
 	"gorm.io/gorm"
 )
 
@@ -10,10 +11,12 @@ var (
 	db      *gorm.DB
 	tracker *JobTracker
 	queue   *Queue
+	logg    *logger.Logger
 )
 
 func Init() error {
 	var err error
+	logg = logger.NewLogger("config")
 
 	db, err = initializePostgres()
 	if err != nil {
