@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"time"
@@ -73,9 +74,24 @@ func newQueue(rabbitmqURL string) (*Queue, error) {
 	return &Queue{Connec: connec, Channel: ch}, nil
 }
 
+type JobMessage struct {
+	JobId string   `json:"jobId"`
+	Cnpjs []string `json:"cnpjs"`
+}
+
 // Publica um job na fila
-func (q *Queue) Publish(jobID string) error {
-	return q.Channel.Publish(
+func (q *Queue) Publish(jobID string, cnpjs []string) error {
+	message := JobMessage{
+		JobId: jobID,
+		Cnpjs: cnpjs,
+	}
+
+	body, err := json.Marshal(message)
+	if err != nil {
+		return fmt.Errorf("failed to marshal message: %v", err)
+	}
+
+	err = q.Channel.Publish(
 		"jobs",       // exchange
 		"enrichment", // routing key
 		false,        // mandatory
@@ -83,7 +99,20 @@ func (q *Queue) Publish(jobID string) error {
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent, // Persistente em disco
 			ContentType:  "application/json",
-			Body:         []byte(jobID),
+			Body:         body,
+			Timestamp:    time.Now(),
 		},
 	)
+	if err != nil {
+		return fmt.Errorf("failed to publish message: %v", err)
+	}
+
+	logg.Infof("Job %s published to RabbitMQ with %d CNPJs", jobID, len(cnpjs))
+
+	return nil
+}
+
+func (r *Queue) Close() {
+	r.Channel.Close()
+	r.Connec.Close()
 }
