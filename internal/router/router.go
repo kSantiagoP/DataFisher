@@ -5,11 +5,13 @@ import (
 	"github.com/kSantiagoP/DataFisher/internal/logger"
 )
 
+var logg *logger.Logger
+
 func Intialize() {
-	logger := logger.NewLogger("router")
+	logg = logger.NewLogger("router")
 	router := gin.Default()
 	initializeRoutes(router)
 
-	logger.Debug("Server listening and running on port 8080")
+	logg.Debug("Server listening and running on port 8080")
 	router.Run(":8080")
 }
