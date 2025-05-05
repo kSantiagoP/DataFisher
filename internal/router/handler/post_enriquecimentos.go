@@ -2,10 +2,12 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kSantiagoP/DataFisher/internal/router/response"
 )
 
 func PostEnriquecimentos(c *gin.Context) {
-	c.JSON(200, gin.H{
+
+	response.SendSuccess(c, gin.H{
 		"message": "chegouPost",
 	})
 }

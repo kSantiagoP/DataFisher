@@ -2,12 +2,13 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kSantiagoP/DataFisher/internal/router/response"
 )
 
 func GetEnriquecimentosResults(c *gin.Context) {
 	id := c.Param("id")
 
-	c.JSON(200, gin.H{
+	response.SendSuccess(c, gin.H{
 		"message": "chegouResults",
 		"id":      id,
 	})
