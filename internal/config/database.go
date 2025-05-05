@@ -1,19 +1,17 @@
 package config
 
 import (
-	"github.com/kSantiagoP/DataFisher/internal/logger"
 	"github.com/kSantiagoP/DataFisher/internal/model/company"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func initializePostgres() (*gorm.DB, error) {
-	logger := logger.NewLogger("postgres")
 	dbUrl := "postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable"
 
 	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 	if err != nil {
-		logger.Errorf("error initializing database: %v", err)
+		logg.Errorf("error initializing database: %v", err)
 		return nil, err
 	}
 
@@ -26,10 +24,10 @@ func initializePostgres() (*gorm.DB, error) {
 	}
 
 	if err != nil {
-		logger.Errorf("postgres automigration error: %v", err)
+		logg.Errorf("postgres automigration error: %v", err)
 		return nil, err
 	}
-	logger.Debug("Postgres online.")
+	logg.Debug("Postgres online.")
 
 	return db, nil
 }
