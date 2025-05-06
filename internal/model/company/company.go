@@ -29,7 +29,7 @@ type Company struct {
 	Cnpj               string
 	Razao_social       string
 	Municipio          string //normalizado IBGE
-	Segmento           int16  //código
+	Segmento           int    //código
 	Situacao_cadastral string //enum (IMPLEMENTAR)
 }
 

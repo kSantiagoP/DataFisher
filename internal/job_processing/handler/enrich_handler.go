@@ -142,13 +142,15 @@ func recordJobStatus(jobId string, tracker *config.JobTracker) error {
 	}
 
 	jobStatus := job.JobStatus{
-		JobId:     data["job_id"].(string),
-		Status:    data["status"].(string),
-		Progress:  data["progress"].(float64),
-		Companies: data["companies"].(int),
-		Completed: data["completed"].(int),
-		Failed:    data["failed"].(int),
-		Pending:   data["pending"].(int),
+		JobId:        data["job_id"].(string),
+		Status:       data["status"].(string),
+		Progress:     data["progress"].(float64),
+		Companies:    data["companies"].(int),
+		Completed:    data["completed"].(int),
+		Failed:       data["failed"].(int),
+		Pending:      data["pending"].(int),
+		JobCreatedAt: data["created_at"].(string),
+		CompletedAt:  data["completed_at"].(string),
 	}
 
 	db := config.GetPostgresDB()

@@ -106,15 +106,23 @@ func (t *JobTracker) GetJobStatus(jobID string) (map[string]interface{}, error) 
 		percentage = float64(progress) / float64(total)
 	}
 
-	return map[string]interface{}{
-		"job_id":    jobID,
-		"status":    result["status"],
-		"progress":  percentage,
-		"companies": total,
-		"completed": total - int(failed),
-		"failed":    int(failed),
-		"pending":   pending - int(failed),
-	}, nil
+	jobStatus := map[string]interface{}{
+		"job_id":       jobID,
+		"status":       result["status"],
+		"progress":     percentage,
+		"companies":    total,
+		"completed":    total - int(failed),
+		"failed":       int(failed),
+		"pending":      pending - int(failed),
+		"created_at":   result["created_at"],
+		"completed_at": result["completed_at"],
+	}
+
+	if lastUpdate, ok := result["last_update"]; ok {
+		jobStatus["last_update"] = lastUpdate
+	}
+
+	return jobStatus, nil
 }
 
 func (t *JobTracker) MarkFailedCNPJ(jobId, cnpj string, reason error) error {
