@@ -61,6 +61,15 @@ services:
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
       - DB_URL=postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable
+  db_init:
+    build: .
+    command: ./dataFisher-db-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_URL=postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable
+
 
 volumes:
   postgres_data:
