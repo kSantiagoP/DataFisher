@@ -26,7 +26,7 @@ func ProcessMessage(job []byte) error {
 		return handler.EnrichCnpj(job)
 
 	case int(types.CONSULT):
-		return nil
+		return handler.ConsultJob(job)
 
 	case int(types.RESULT):
 		return nil

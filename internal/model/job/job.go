@@ -7,3 +7,14 @@ type JobCnpj struct {
 	JobId string
 	Cnpj  string
 }
+
+type JobStatus struct {
+	gorm.Model
+	JobId     string
+	Status    string
+	Progress  float64
+	Companies int
+	Completed int
+	Failed    int
+	Pending   int
+}

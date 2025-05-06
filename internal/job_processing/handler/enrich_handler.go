@@ -12,12 +12,6 @@ import (
 	"github.com/kSantiagoP/DataFisher/internal/model/job"
 )
 
-type JobRequest struct {
-	JobId     string   `json:"jobId"`
-	Cnpjs     []string `json:"cnpjs"`
-	Operation int      `json:"operation"`
-}
-
 func EnrichCnpj(job []byte) error {
 	logg := logger.NewLogger("workerProcessor")
 
@@ -68,7 +62,7 @@ func EnrichCnpj(job []byte) error {
 
 	if failed > 0 {
 
-		if err := recordJob(request.JobId, request.Cnpjs); err != nil {
+		if err := recordJobCnpj(request.JobId, request.Cnpjs); err != nil {
 			logg.Errorf("error saving completed job in database: %v", err)
 			return err
 		}
@@ -78,13 +72,23 @@ func EnrichCnpj(job []byte) error {
 			return fmt.Errorf("error marking partial completion: %v", err)
 		}
 
+		err = recordJobStatus(request.JobId, tracker)
+		if err != nil {
+			return fmt.Errorf("error saving job into database: %v", err)
+		}
+
 		logg.Infof("job %s completed with %d failures", request.JobId, failed)
 		return nil
 	}
 
-	if err = recordJob(request.JobId, request.Cnpjs); err != nil {
+	if err = recordJobCnpj(request.JobId, request.Cnpjs); err != nil {
 		logg.Errorf("error saving completed job in database: %v", err)
 		return err
+	}
+
+	err = recordJobStatus(request.JobId, tracker)
+	if err != nil {
+		return fmt.Errorf("error saving job into database: %v", err)
 	}
 
 	logg.Infof("job %s completed successfully", request.JobId)
@@ -117,10 +121,10 @@ func enrichCNPJ(cnpj string) error {
 	return nil
 }
 
-func recordJob(jobId string, cnpjs []string) error {
-	jobBatch := []job.Job{}
+func recordJobCnpj(jobId string, cnpjs []string) error {
+	jobBatch := []job.JobCnpj{}
 	for _, cnpj := range cnpjs {
-		jobBatch = append(jobBatch, job.Job{
+		jobBatch = append(jobBatch, job.JobCnpj{
 			Cnpj:  cnpj,
 			JobId: jobId,
 		})
@@ -129,4 +133,24 @@ func recordJob(jobId string, cnpjs []string) error {
 	db := config.GetPostgresDB()
 
 	return db.Create(&jobBatch).Error
+}
+
+func recordJobStatus(jobId string, tracker *config.JobTracker) error {
+	data, err := tracker.GetJobStatus(jobId)
+	if err != nil {
+		return err
+	}
+
+	jobStatus := job.JobStatus{
+		JobId:     data["job_id"].(string),
+		Status:    data["status"].(string),
+		Progress:  data["progress"].(float64),
+		Companies: data["companies"].(int),
+		Completed: data["completed"].(int),
+		Failed:    data["failed"].(int),
+		Pending:   data["pending"].(int),
+	}
+
+	db := config.GetPostgresDB()
+	return db.Create(&jobStatus).Error
 }

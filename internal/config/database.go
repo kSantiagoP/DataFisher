@@ -59,5 +59,12 @@ func MigrateSchemas() error {
 		}
 	}
 
+	if !db.Migrator().HasTable(&job.JobStatus{}) {
+		err = db.AutoMigrate(&job.JobStatus{})
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

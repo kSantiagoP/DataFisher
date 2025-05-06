@@ -19,11 +19,13 @@ func (t *JobTracker) CreateJob(jobId string, cnpj []string) error {
 	//Job structure:
 	//Key: job:{id} -> {status, progress, total}
 	err := t.client.HSet(ctx, "job:"+jobId,
-		"status", "pending",
+		"status", "EM_ANDAMENTO",
 		"progress", 0,
 		"total", len(cnpj),
 		"failed", 0,
+		"pending", len(cnpj),
 		"created_at", time.Now().Format(time.RFC3339),
+		"last_update", time.Now().Format(time.RFC3339),
 	).Err()
 	if err != nil {
 		return fmt.Errorf("error creating job %s:%v", jobId, err)
@@ -53,14 +55,26 @@ func (t *JobTracker) IncrementProgress(jobId string) error {
 		return err
 	}
 
-	_, err = t.client.HSet(ctx, "job:"+jobId, "status", "processing").Result()
+	_, err = t.client.HIncrBy(ctx, "job:"+jobId, "pending", -1).Result()
+	if err != nil {
+		return err
+	}
+
+	_, err = t.client.HSet(ctx, "job:"+jobId,
+		"status", "EM_ANDAMENTO",
+		"last_update", time.Now().Format(time.RFC3339),
+	).Result()
 	return err
 }
 
 func (t *JobTracker) CompleteJob(jobId string) error {
 	ctx := context.Background()
+	_, err := t.client.HDel(ctx, "job:"+jobId, "last_update").Result()
+	if err != nil {
+		return err
+	}
 	return t.client.HSet(ctx, "job:"+jobId,
-		"status", "completed",
+		"status", "CONCLUIDO",
 		"completed_at", time.Now().Format(time.RFC3339),
 	).Err()
 }
@@ -78,19 +92,28 @@ func (t *JobTracker) GetJobStatus(jobID string) (map[string]interface{}, error) 
 		return nil, fmt.Errorf("job not found")
 	}
 
+	failed, err := t.GetFailedCount(jobID)
+	if err != nil {
+		return nil, err
+	}
+
 	// Calcula porcentagem de conclusão
 	progress, _ := strconv.Atoi(result["progress"])
 	total, _ := strconv.Atoi(result["total"])
-	percentage := 0
+	pending, _ := strconv.Atoi(result["pending"])
+	percentage := 0.0
 	if total > 0 {
-		percentage = (progress * 100) / total
+		percentage = float64(progress) / float64(total)
 	}
 
 	return map[string]interface{}{
-		"status":     result["status"],
-		"progress":   progress,
-		"total":      total,
-		"percentage": percentage,
+		"job_id":    jobID,
+		"status":    result["status"],
+		"progress":  percentage,
+		"companies": total,
+		"completed": total - int(failed),
+		"failed":    int(failed),
+		"pending":   pending - int(failed),
 	}, nil
 }
 
@@ -102,7 +125,10 @@ func (t *JobTracker) MarkFailedCNPJ(jobId, cnpj string, reason error) error {
 		return err
 	}
 
-	return t.client.HSet(ctx, "job:"+jobId+":fail_reasons", cnpj, reason.Error()).Err()
+	return t.client.HSet(ctx, "job:"+jobId+":fail_reasons",
+		cnpj, reason.Error(),
+		"last_update", time.Now().Format(time.RFC3339),
+	).Err()
 }
 
 func (t *JobTracker) StartJob(jobId string) error {
@@ -118,8 +144,12 @@ func (t *JobTracker) GetFailedCount(jobId string) (int64, error) {
 
 func (t *JobTracker) PartiallyCompleteJob(jobId string, failedCount int64) error {
 	ctx := context.Background()
+	_, err := t.client.HDel(ctx, "job:"+jobId, "last_update").Result()
+	if err != nil {
+		return err
+	}
 	return t.client.HSet(ctx, "job:"+jobId,
-		"status", "partially_completed",
+		"status", "CONCLUIDO",
 		"completed_at", time.Now().Format(time.RFC3339),
 		"failed", failedCount,
 	).Err()
