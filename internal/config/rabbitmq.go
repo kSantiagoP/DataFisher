@@ -75,15 +75,17 @@ func newQueue(rabbitmqURL string) (*Queue, error) {
 }
 
 type JobMessage struct {
-	JobId string   `json:"jobId"`
-	Cnpjs []string `json:"cnpjs"`
+	JobId     string   `json:"jobId"`
+	Cnpjs     []string `json:"cnpjs"`
+	Operation int      `json:"operation"`
 }
 
 // Publica um job na fila
-func (q *Queue) Publish(jobID string, cnpjs []string) error {
+func (q *Queue) Publish(jobID string, cnpjs []string, operation int) error {
 	message := JobMessage{
-		JobId: jobID,
-		Cnpjs: cnpjs,
+		JobId:     jobID,
+		Cnpjs:     cnpjs,
+		Operation: operation,
 	}
 
 	body, err := json.Marshal(message)

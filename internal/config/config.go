@@ -18,11 +18,6 @@ func Init() error {
 	var err error
 	logg = logger.NewLogger("config")
 
-	db, err = initializePostgres()
-	if err != nil {
-		return fmt.Errorf("error initializing database: %v", err)
-	}
-
 	tracker, err = initializeRedis()
 	if err != nil {
 		return fmt.Errorf("error initializing tracker: %v", err)
@@ -33,6 +28,15 @@ func Init() error {
 		return fmt.Errorf("error initializing queue: %v", err)
 	}
 
+	return nil
+}
+
+func InitDatabase() error {
+	var err error
+	db, err = initializePostgres()
+	if err != nil {
+		return fmt.Errorf("error initializing database: %v", err)
+	}
 	return nil
 }
 

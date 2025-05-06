@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	companyPhone "github.com/kSantiagoP/DataFisher/internal/model/company_phone"
 )
 
 type PhoneValid struct {
@@ -11,13 +13,14 @@ type PhoneValid struct {
 	Phone string `json:"phone"`
 }
 
-func ValidatePhone(phones []string) []PhoneValid {
+func ValidatePhone(phones []string, cnpj string) []companyPhone.CompanyPhone {
 	time.Sleep(100 * time.Millisecond)
-	var results []PhoneValid
+	var results []companyPhone.CompanyPhone
 	for _, phone := range phones {
 		_, isValid, _ := GetLastCharAndCheckEven(phone)
 
-		results = append(results, PhoneValid{
+		results = append(results, companyPhone.CompanyPhone{
+			Cnpj:  cnpj,
 			Valid: isValid,
 			Phone: phone,
 		})

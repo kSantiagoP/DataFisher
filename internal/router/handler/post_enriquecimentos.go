@@ -9,6 +9,7 @@ import (
 	"github.com/kSantiagoP/DataFisher/internal/config"
 	"github.com/kSantiagoP/DataFisher/internal/router/request"
 	"github.com/kSantiagoP/DataFisher/internal/router/response"
+	"github.com/kSantiagoP/DataFisher/internal/types"
 )
 
 func PostEnriquecimentos(c *gin.Context) {
@@ -32,7 +33,7 @@ func PostEnriquecimentos(c *gin.Context) {
 	}
 
 	queue := config.GetRabbitQueue()
-	if err := queue.Publish(jobId, request.Cnpjs); err != nil {
+	if err := queue.Publish(jobId, request.Cnpjs, int(types.ENRICH)); err != nil {
 		logg.Errorf("publish error: %v", err)
 		response.SendError(c, http.StatusInternalServerError, "failed to publish job")
 		return

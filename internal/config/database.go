@@ -2,6 +2,9 @@ package config
 
 import (
 	"github.com/kSantiagoP/DataFisher/internal/model/company"
+	companyEmail "github.com/kSantiagoP/DataFisher/internal/model/company_email"
+	companyPhone "github.com/kSantiagoP/DataFisher/internal/model/company_phone"
+	"github.com/kSantiagoP/DataFisher/internal/model/job"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,6 +21,27 @@ func initializePostgres() (*gorm.DB, error) {
 	//migrate schema
 	if !db.Migrator().HasTable(&company.Company{}) {
 		err = db.AutoMigrate(&company.Company{})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if !db.Migrator().HasTable(&companyEmail.CompanyEmail{}) {
+		err = db.AutoMigrate(&companyEmail.CompanyEmail{})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if !db.Migrator().HasTable(&companyPhone.CompanyPhone{}) {
+		err = db.AutoMigrate(&companyPhone.CompanyPhone{})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if !db.Migrator().HasTable(&job.Job{}) {
+		err = db.AutoMigrate(&job.Job{})
 		if err != nil {
 			return nil, err
 		}

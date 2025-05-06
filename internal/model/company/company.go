@@ -8,6 +8,22 @@ import (
 	"gorm.io/gorm"
 )
 
+type SituacaoCadastral int
+
+const (
+	INATIVA SituacaoCadastral = iota
+	ATIVA
+)
+
+var situacaoNome = map[SituacaoCadastral]string{
+	INATIVA: "INATIVA",
+	ATIVA:   "ATIVA",
+}
+
+func (sn SituacaoCadastral) String() string {
+	return situacaoNome[sn]
+}
+
 type Company struct {
 	gorm.Model
 	Cnpj               string

@@ -17,6 +17,12 @@ func main() {
 		return
 	}
 
+	err = config.InitDatabase()
+	if err != nil {
+		logger.Errorf("Error initializing database: %v", err)
+		return
+	}
+
 	err = data_api.Init()
 	if err != nil {
 		logger.Errorf("Error connecting with dataApi: %v", err)
