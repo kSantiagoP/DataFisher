@@ -20,6 +20,7 @@ type ConsultaResponse struct {
 	Progress   float64      `json:"progress"`
 	Totals     TotalsStruct `json:"totals"`
 	LastUpdate *time.Time   `json:"last_update,omitempty"`
+	ResultsUrl string       `json:"results_url,omitempty"`
 }
 
 type PhoneStruct struct {

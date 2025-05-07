@@ -45,6 +45,9 @@ func GetEnriquecimentos(c *gin.Context) {
 	if lastResponse, ok := result["last_update"].(time.Time); ok {
 		res.LastUpdate = &lastResponse
 	}
+	if result["status"].(string) == "CONCLUIDO" {
+		res.ResultsUrl = "http://localhost:8080/enriquecimentos/" + id + "/results"
+	}
 	response.SendSuccess(c, res)
 }
 
