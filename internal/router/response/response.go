@@ -25,11 +25,11 @@ type ConsultaResponse struct {
 
 type PhoneStruct struct {
 	Numero string `gorm:"column:phone" json:"numero"`
-	Valido bool   `gorm:"column:valido" json:"valido"`
+	Valido bool   `gorm:"column:valid" json:"valido"`
 }
 type EmailStruct struct {
 	Email  string `gorm:"column:email" json:"email"`
-	Valido bool   `gorm:"column:valido" json:"valido"`
+	Valido bool   `gorm:"column:valid" json:"valido"`
 }
 
 type ItemsStruct struct {
