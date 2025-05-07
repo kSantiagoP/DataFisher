@@ -7,8 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kSantiagoP/DataFisher/internal/config"
 	"github.com/kSantiagoP/DataFisher/internal/model/company"
-	companyEmail "github.com/kSantiagoP/DataFisher/internal/model/company_email"
-	companyPhone "github.com/kSantiagoP/DataFisher/internal/model/company_phone"
 	"github.com/kSantiagoP/DataFisher/internal/model/job"
 	"github.com/kSantiagoP/DataFisher/internal/router/response"
 	"github.com/kSantiagoP/DataFisher/internal/types"
@@ -69,11 +67,11 @@ func getResults(jobId string) (response.ResultResponse, error) {
 			return response.ResultResponse{}, err
 		}
 
-		var emails []companyEmail.CompanyEmail
-		db.Where("cnpj = ?", jc.Cnpj).Find(&emails)
+		var emails []response.EmailStruct
+		db.Table("company_emails").Select("cnpj", "email", "valid").Where("cnpj = ?", jc.Cnpj).Find(&emails)
 
-		var phones []companyPhone.CompanyPhone
-		db.Where("cnpj = ?", jc.Cnpj).Find(&phones)
+		var phones []response.PhoneStruct
+		db.Table("company_phones").Select("cnpj", "phone", "valid").Where("cnpj = ?", jc.Cnpj).Find(&phones)
 
 		results.Items = append(results.Items, response.ItemsStruct{
 			Cnpj:              cmpny.Cnpj,

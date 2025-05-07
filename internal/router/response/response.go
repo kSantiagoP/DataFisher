@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	companyEmail "github.com/kSantiagoP/DataFisher/internal/model/company_email"
-	companyPhone "github.com/kSantiagoP/DataFisher/internal/model/company_phone"
 	"github.com/kSantiagoP/DataFisher/internal/types"
 )
 
@@ -25,23 +23,23 @@ type ConsultaResponse struct {
 }
 
 type PhoneStruct struct {
-	Numero string `json:"numero"`
-	Valido bool   `json:"valido"`
+	Numero string `gorm:"column:phone" json:"numero"`
+	Valido bool   `gorm:"column:valido" json:"valido"`
 }
 type EmailStruct struct {
-	Email  string `json:"email"`
-	Valido bool   `json:"valido"`
+	Email  string `gorm:"column:email" json:"email"`
+	Valido bool   `gorm:"column:valido" json:"valido"`
 }
 
 type ItemsStruct struct {
-	Cnpj              string                      `json:"cnpj"`
-	RazaoSocial       string                      `json:"razao_social"`
-	Municipio         string                      `json:"municipio"`
-	Segmento          types.Segmento              `json:"segmento"`
-	SituacaoCadastrao types.Situation             `json:"situacao_cadastral"`
-	UpdatedAt         time.Time                   `json:"updated_at"`
-	Telefones         []companyPhone.CompanyPhone `json:"telefones"`
-	Emails            []companyEmail.CompanyEmail `json:"emails"`
+	Cnpj              string          `json:"cnpj"`
+	RazaoSocial       string          `json:"razao_social"`
+	Municipio         string          `json:"municipio"`
+	Segmento          types.Segmento  `json:"segmento"`
+	SituacaoCadastrao types.Situation `json:"situacao_cadastral"`
+	UpdatedAt         time.Time       `json:"updated_at"`
+	Telefones         []PhoneStruct   `json:"telefones"`
+	Emails            []EmailStruct   `json:"emails"`
 }
 
 type ResultResponse struct {
