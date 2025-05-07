@@ -1,4 +1,16 @@
 {
+    "04481464000118": ["contato@techsolutions.com", "suporte@techsolutions.com", "financeiro@techsolutions.com"],
+    "31646212000174": ["admin@agrotech.com.br", "vendas@agrotech.com.br"],
     "35339277000128": ["contato@exemplo.com", "suporte@exemplo.com"],
-    "62367487000100": ["admina@empresa.com"]
+    "62367487000100": ["admin@empresa.com"],
+    "74666731000107": ["sac@empresabh.com", "rh@empresabh.com"],
+    "96288576000175": ["contato@financiafacil.com", "diretor@financiafacil.com"],
+    "11428793000160": ["atendimento@healthcare.com", "medicos@healthcare.com"],
+    "37697954000105": ["secretaria@escoladigital.edu", "coordenacao@escoladigital.edu"],
+    "45316650000189": ["vendas@megavarejo.com.br", "sac@megavarejo.com.br"],
+    "50185876000128": ["engenharia@industriaforte.com", "compras@industriaforte.com"],
+    "21848274000105": ["projetos@constroibem.com", "orçamentos@constroibem.com"],
+    "26277114000177": ["logistica@rapida.com.br", "frotas@rapida.com.br"],
+    "34982038000129": ["sustentabilidade@energiaverde.com", "comercial@energiaverde.com"],
+    "81049353000188": ["dev@codemasters.tech", "recrutamento@codemasters.tech"]
 }
