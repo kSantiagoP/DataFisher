@@ -1,11 +1,13 @@
 package config
 
 import (
+	"os"
+
 	"github.com/go-redis/redis/v8"
 )
 
 func initializeRedis() (*JobTracker, error) {
-	redisURL := "redis://redis:6379"
+	redisURL := os.Getenv("REDIS_URL")
 	return newTracker(redisURL)
 }
 

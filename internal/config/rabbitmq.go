@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func initializeRabbitMQ(maxAttempts int) (*Queue, error) {
-	rabbitmqURL := "amqp://guest:guest@rabbitmq:5672/"
+	rabbitmqURL := os.Getenv("RABBITMQ_URL")
 
 	for i := range maxAttempts {
 		q, err := newQueue(rabbitmqURL)

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/kSantiagoP/DataFisher/internal/model/company"
 	companyEmail "github.com/kSantiagoP/DataFisher/internal/model/company_email"
 	companyPhone "github.com/kSantiagoP/DataFisher/internal/model/company_phone"
@@ -10,7 +12,7 @@ import (
 )
 
 func initializePostgres() (*gorm.DB, error) {
-	dbUrl := "postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable"
+	dbUrl := os.Getenv("DB_URL")
 
 	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 	if err != nil {
@@ -24,7 +26,7 @@ func initializePostgres() (*gorm.DB, error) {
 }
 
 func MigrateSchemas() error {
-	dbUrl := "postgres://postgres:postgres@postgres:5432/datafisher_db?sslmode=disable"
+	dbUrl := os.Getenv("DB_URL")
 	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 	if err != nil {
 		logg.Errorf("error initializing database: %v", err)

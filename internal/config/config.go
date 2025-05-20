@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	"github.com/joho/godotenv"
 	"github.com/kSantiagoP/DataFisher/internal/logger"
 	"gorm.io/gorm"
 )
@@ -17,6 +18,11 @@ var (
 func Init() error {
 	var err error
 	logg = logger.NewLogger("config")
+
+	err = godotenv.Load()
+	if err != nil {
+		return fmt.Errorf("error initializing .env: %v", err)
+	}
 
 	tracker, err = initializeRedis()
 	if err != nil {

@@ -10,6 +10,7 @@ RUN go build -o /app/dataFisher-db-init ./cmd/db_init
 
 FROM alpine:latest
 WORKDIR /root/
+COPY --from=builder /app/.env .
 COPY --from=builder /app/dataFisher-api .
 COPY --from=builder /app/dataFisher-worker .
 COPY --from=builder /app/dataFisher-db-init .
