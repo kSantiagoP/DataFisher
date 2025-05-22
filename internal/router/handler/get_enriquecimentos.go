@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,11 @@ import (
 func GetEnriquecimentos(c *gin.Context) {
 	id := c.Param("id")
 	var err error
+	resultsUrl := os.Getenv("RESULTS_URL")
+	if resultsUrl == "" {
+		resultsUrl = "http://localhost:8080/"
+	}
+
 	tracker := config.GetRedisTracker()
 	result, _ := tracker.GetJobStatus(id)
 	if len(result) == 0 {
@@ -46,7 +52,7 @@ func GetEnriquecimentos(c *gin.Context) {
 		res.LastUpdate = &lastResponse
 	}
 	if result["status"].(string) == "CONCLUIDO" {
-		res.ResultsUrl = "http://localhost:8080/enriquecimentos/" + id + "/results"
+		res.ResultsUrl = resultsUrl + "enriquecimentos/" + id + "/results"
 	}
 	response.SendSuccess(c, res)
 }
